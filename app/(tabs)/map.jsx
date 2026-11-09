@@ -123,14 +123,24 @@ export default function MapScreen() {
 
   useEffect(() => {
     if (params?.destination && destinations.length > 0) {
-      const destName = params.destination.toString();
-      const matchedDest = destinations.find(d => d.name === destName);
+      const destName = params.destination.toString().toLowerCase();
+      const matchedDest = destinations.find(d => d.name.toLowerCase().includes(destName) || destName.includes(d.name.toLowerCase()));
+      
+      let matchedOrig = null;
+      if (params?.origin) {
+        const origName = params.origin.toString().toLowerCase();
+        matchedOrig = destinations.find(d => d.name.toLowerCase().includes(origName) || origName.includes(d.name.toLowerCase()));
+      }
+
       if (matchedDest) {
         setSelectedDestination(matchedDest);
+        if (matchedOrig) {
+          setSelectedOrigin(matchedOrig);
+        }
         setTopBarMode('ROUTING');
       }
     }
-  }, [params?.destination, destinations]);
+  }, [params?.destination, params?.origin, destinations]);
 
   useEffect(() => {
     (async () => {
